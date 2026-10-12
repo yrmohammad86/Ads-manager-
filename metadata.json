@@ -1,0 +1,10 @@
+{
+  "name": "AdCraft AI | استوديو إعلانات البراند الذكي",
+  "description": "قسم إعلانات متكامل للبراند مع حماية شكل المنتج Product Lock وصياغات إعلانية كويتية احترافية.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
