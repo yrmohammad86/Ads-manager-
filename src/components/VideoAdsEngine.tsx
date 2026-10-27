@@ -21,7 +21,9 @@ import {
   FileAudio,
   Check,
   AlertCircle,
-  Activity
+  Activity,
+  ShieldAlert,
+  X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ProductItem, BrandDNA } from '../types/adcraft';
@@ -55,6 +57,11 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
   const [audioDuration, setAudioDuration] = useState(15);
   const [audioVolume, setAudioVolume] = useState(1);
   const [isGeneratingCloneVoice, setIsGeneratingCloneVoice] = useState(false);
+  // Voice Cloning Consent & Authorization Safeguards
+  const [hasVoiceConsent, setHasVoiceConsent] = useState(false);
+  const [showConsentModal, setShowConsentModal] = useState(false);
+  const [consentAcknowledgedCheckbox, setConsentAcknowledgedCheckbox] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'clone' | 'record' | null>(null);
 
   const mediaRecorderVoiceRef = useRef<MediaRecorder | null>(null);
   const userAudioInstanceRef = useRef<HTMLAudioElement | null>(null);
@@ -328,6 +335,15 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
   // Microphone Voice Recorder for Authentic Kuwaiti Accent
   const handleStartVoiceRecording = async () => {
     setMicError(null);
+    if (!hasVoiceConsent) {
+      setPendingAction('record');
+      setShowConsentModal(true);
+      return;
+    }
+    await executeVoiceRecording();
+  };
+
+  const executeVoiceRecording = async () => {
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setMicError('المايكروفون غير متاح في هذه البيئة. يمكنك استخدام خيار رفع ملف صوتي (MP3/WAV) مباشرة.');
@@ -389,10 +405,23 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
     setIsRecordingAudio(false);
   };
 
-  // Handle Audio File Upload
+  // Handle Audio File Upload with Safe Constraints
   const handleAudioFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 1. File size safeguard (max 25MB)
+      if (file.size > 25 * 1024 * 1024) {
+        setMicError('حجم الملف الصوتي كبير جداً (أكثر من 25 ميجابايت). الرجاء رفع ملف صوتي بحجم أصغر.');
+        return;
+      }
+
+      // 2. Audio type safeguard
+      const isValidAudioType = file.type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|aac|webm)$/i.test(file.name);
+      if (!isValidAudioType) {
+        setMicError('نوع الملف المرفوع غير مدعوم. يرجى اختيار ملف صوتي صالح (MP3, WAV, WebM, M4A).');
+        return;
+      }
+
       const url = URL.createObjectURL(file);
       setRecordedAudioBlob(file);
       setRecordedAudioUrl(url);
@@ -419,8 +448,17 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
     }
   };
 
-  // Generate speech reading the 4 scenes using the Cloned Voice Persona
+  // Generate speech reading the 4 scenes using the Cloned Voice Persona with Consent Verification
   const handleGenerateClonedVoiceover = async () => {
+    if (!hasVoiceConsent) {
+      setPendingAction('clone');
+      setShowConsentModal(true);
+      return;
+    }
+    await executeVoiceCloning();
+  };
+
+  const executeVoiceCloning = async () => {
     setIsGeneratingCloneVoice(true);
     setAudioMode('merchant_voice');
     const fullAdScript = scenes.map((s) => s.voiceover).join(' ... ');
@@ -1115,6 +1153,93 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
           </div>
         </div>
       </div>
+
+      {/* Voice Cloning Consent & Authorization Safeguard Modal */}
+      {showConsentModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 text-right shadow-2xl relative">
+            <button
+              onClick={() => {
+                setShowConsentModal(false);
+                setPendingAction(null);
+              }}
+              className="absolute top-5 left-5 text-zinc-400 hover:text-white p-1 rounded-lg bg-zinc-800/80 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold mb-2">
+              <ShieldAlert className="w-4 h-4" />
+              ضوابط وأخلاقيات الذكاء الاصطناعي الصوتي
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-3">
+              إقرار وتفويض استخدام البصمة الصوتية
+            </h3>
+
+            <div className="space-y-3 text-xs text-zinc-300 leading-relaxed bg-zinc-950 border border-zinc-800/80 rounded-2xl p-4 mb-5">
+              <p className="font-semibold text-amber-300">
+                لحماية الملكية الفكرية ومنع التزييف الصوتي غير المصرح به:
+              </p>
+              <ul className="space-y-2 list-disc list-inside text-zinc-400">
+                <li>
+                  <strong className="text-zinc-200">ملكية الصوت والتفويض:</strong> تؤكد أنك صاحب الصوت أو حاصل على موافقة وتفويض خطي صريح من صاحب الصوت لاستخدامه في الحملات الإعلانية والتجارية.
+                </li>
+                <li>
+                  <strong className="text-zinc-200">حظر التزييف والانتحال:</strong> يُحظر تماماً استخدام نماذج الصوت لتقليد شخصيات عامة أو جهات رسمية أو إنتاج محتوى مضلل أو غير قانوني.
+                </li>
+                <li>
+                  <strong className="text-zinc-200">الغرض الإعلاني:</strong> تُستخدم البصمة الصوتية حصرياً لصياغة وقراءة مشاهد الإعلان لمتجرك المعتمد.
+                </li>
+              </ul>
+            </div>
+
+            {/* Consent Checkbox */}
+            <label className="flex items-start gap-3 p-3 bg-zinc-850 border border-zinc-700/60 rounded-xl cursor-pointer hover:border-amber-500/50 transition-colors mb-5">
+              <input
+                type="checkbox"
+                checked={consentAcknowledgedCheckbox}
+                onChange={(e) => setConsentAcknowledgedCheckbox(e.target.checked)}
+                className="w-4 h-4 mt-0.5 accent-amber-500 rounded cursor-pointer shrink-0"
+              />
+              <span className="text-xs text-zinc-200 select-none">
+                أقر وأتعهد بأنني أملك الحقوق القانونية أو التفويض الصريح لاستخدام هذه البصمة الصوتية في إعلانات متجري، وأتحمل المسؤولية الأخلاقية والقانونية كاملة.
+              </span>
+            </label>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                disabled={!consentAcknowledgedCheckbox}
+                onClick={() => {
+                  setHasVoiceConsent(true);
+                  setShowConsentModal(false);
+                  if (pendingAction === 'clone') {
+                    executeVoiceCloning();
+                  } else if (pendingAction === 'record') {
+                    executeVoiceRecording();
+                  }
+                  setPendingAction(null);
+                }}
+                className="flex-1 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-950 font-bold py-2.5 px-4 rounded-xl text-xs transition-colors"
+              >
+                موافق ومتابعة الاستخدام الصوتي 🎙️
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowConsentModal(false);
+                  setPendingAction(null);
+                }}
+                className="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-semibold transition-colors"
+              >
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
