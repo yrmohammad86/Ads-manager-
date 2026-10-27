@@ -21,3 +21,26 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(113, 113, 122, 0.8);
 }
+
+/* Print optimizations for A4 campaign brief */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #18181b !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  header, footer, nav, button, .no-print {
+    display: none !important;
+  }
+
+  #campaign-pdf-printable-brief {
+    box-shadow: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12mm 12mm !important;
+    border-radius: 0 !important;
+  }
+}

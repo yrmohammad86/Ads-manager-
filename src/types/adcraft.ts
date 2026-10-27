@@ -178,4 +178,38 @@ export interface HumanReviewAudit {
   phoneticNotes: string;
 }
 
+export type AdContentType =
+  | 'hero_image'        // إعلان صورة بطل رئيسي (Hero Master)
+  | 'video_reels'       // فيديو وريلز عمودي 9:16 (Video & Reels)
+  | 'kashta_lifestyle'  // نمط حياة وكشتات خارجية (Lifestyle & Kashta)
+  | 'promo_offer'       // عروض وخصومات تجارية كبرى (Retail Mega Promo)
+  | 'feature_focus'     // تركيز على المواصفات والسرعة (Feature & Tech Focus)
+  | 'story_card';       // بطاقات تفاعلية للستوري (Story Interactive Card)
+
+export interface CampaignRecord {
+  id: string;
+  title: string;
+  productName: string;
+  productId: string;
+  contentType: AdContentType;
+  contentTypeName: string;
+  placement: 'story_9_16' | 'feed_4_5' | 'square_1_1';
+  platform: 'Instagram' | 'TikTok' | 'Snapchat' | 'Meta' | 'WhatsApp';
+  priceKWD: number;
+  originalPriceKWD?: number;
+  adCopy: {
+    headline: string;
+    subtext: string;
+    cta: string;
+    badge: string;
+  };
+  sourceUrl?: string;
+  adVisualUrl: string;
+  impressionsEstimated: number;
+  clicksEstimated: number;
+  conversionsEstimated: number;
+  status: 'ACTIVE' | 'SCHEDULED' | 'DRAFT';
+  createdAt: string;
+}
+
 

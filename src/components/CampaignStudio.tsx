@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ProductItem, 
   BrandDNA, 
@@ -38,13 +38,15 @@ import {
   ChevronRight,
   ImageDown,
   LayoutTemplate,
-  Check,
-  Grid,
   Bot,
   Wand2,
-  Plus
+  Plus,
+  FileText,
+  FileDown,
+  Link2
 } from 'lucide-react';
 import { AIProductAdGeneratorModal } from './AIProductAdGeneratorModal';
+import { CampaignPdfModal } from './CampaignPdfModal';
 
 interface CampaignStudioProps {
   products: ProductItem[];
@@ -52,6 +54,8 @@ interface CampaignStudioProps {
   activeProduct: ProductItem;
   onSelectProduct: (product: ProductItem) => void;
   onAddNewProduct?: (newProduct: ProductItem) => void;
+  appliedCopy?: { headline: string; subtext: string; cta: string; badge: string } | null;
+  onOpenImportModal?: () => void;
 }
 
 export const CampaignStudio: React.FC<CampaignStudioProps> = ({
@@ -60,6 +64,8 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   activeProduct,
   onSelectProduct,
   onAddNewProduct,
+  appliedCopy,
+  onOpenImportModal,
 }) => {
   // Studio selections
   const [selectedLayoutPreset, setSelectedLayoutPreset] = useState<LayoutPreset>(LAYOUT_PRESETS[0]);
@@ -89,12 +95,25 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   // Modals & Live Preview States
   const [isQCModalOpen, setIsQCModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
   const [isCampaignApproved, setIsCampaignApproved] = useState(false);
   const [approvalToast, setApprovalToast] = useState<string | null>(null);
   const [generationToast, setGenerationToast] = useState<string | null>(null);
   const [studioViewMode, setStudioViewMode] = useState<'split' | 'live_preview'>('split');
   const [isQuickExportingPng, setIsQuickExportingPng] = useState(false);
+
+  // Sync copy applied from Copy & Dialect Studio
+  useEffect(() => {
+    if (appliedCopy) {
+      if (appliedCopy.headline) setHeadline(appliedCopy.headline);
+      if (appliedCopy.subtext) setSubtext(appliedCopy.subtext);
+      if (appliedCopy.cta) setCtaText(appliedCopy.cta);
+      if (appliedCopy.badge) setBadge(appliedCopy.badge);
+      setApprovalToast('✨ تم استيراد وتطبيق النصوص المعتمدة بنجاح من مدقق اللهجة الكويتية!');
+      setTimeout(() => setApprovalToast(null), 6000);
+    }
+  }, [appliedCopy]);
 
   // AI Product & Ad Generation Callback
   const handleProductGenerated = (
@@ -269,6 +288,28 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             )}
             <span>{isQuickExportingPng ? 'جاري التحميل...' : 'حفظ كصورة (PNG)'}</span>
           </button>
+
+          {/* Direct Campaign PDF Dossier Export Button */}
+          <button
+            onClick={() => setIsPdfModalOpen(true)}
+            className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-750 border border-amber-500/50 text-amber-300 font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-amber-500/10"
+            title="تصدير مسودة الحملة كوثيقة A4 PDF للمراجعة الأوفلاين والاعتماد"
+          >
+            <FileText className="w-3.5 h-3.5 text-amber-400" />
+            <span>تقرير الحملة (PDF Dossier)</span>
+          </button>
+
+          {/* Import Ad from URL Button */}
+          {onOpenImportModal && (
+            <button
+              onClick={onOpenImportModal}
+              className="flex items-center gap-1.5 bg-zinc-850 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-zinc-200 hover:text-amber-300 font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-sm"
+              title="إضافة إعلان عن طريق رابط مع سحب المواصفات والأسعار تلقائياً"
+            >
+              <Link2 className="w-3.5 h-3.5 text-amber-400" />
+              <span>استيراد برابط 🔗</span>
+            </button>
+          )}
 
           {/* AI Creative & Product Generator Button */}
           <button
@@ -876,6 +917,22 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         placement={selectedPlacement}
         headline={headline}
         subtext={subtext}
+        ctaText={ctaText}
+        onOpenPdfModal={() => setIsPdfModalOpen(true)}
+      />
+
+      {/* Campaign Brief A4 PDF Modal for Offline Review */}
+      <CampaignPdfModal
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        product={activeProduct}
+        brand={brand}
+        placement={selectedPlacement}
+        layoutPreset={selectedLayoutPreset}
+        backgroundScene={selectedScene}
+        headline={headline}
+        subtext={subtext}
+        badge={badge}
         ctaText={ctaText}
       />
 

@@ -1,4 +1,4 @@
-import { BrandDNA, ProductItem, CreativeConcept, AdPlacement, BackgroundScene, LayoutPreset } from '../types/adcraft';
+import { BrandDNA, ProductItem, CreativeConcept, AdPlacement, BackgroundScene, LayoutPreset, AdContentType, CampaignRecord } from '../types/adcraft';
 
 export const INITIAL_BRAND_DNA: BrandDNA = {
   name: 'Outdoor Kuwait',
@@ -313,6 +313,217 @@ export const LAYOUT_PRESETS: LayoutPreset[] = [
     showSpecsTags: false,
     accentBorder: false,
     recommendedFor: 'استوديو الفخامة، الأجهزة ذات القيمة العالية، وبناء الهيبة',
+  },
+];
+
+export const AD_CONTENT_TYPES: {
+  id: AdContentType;
+  name: string;
+  nameEn: string;
+  icon: string;
+  description: string;
+  color: string;
+}[] = [
+  {
+    id: 'hero_image',
+    name: 'إعلان بطل رئيسي (Hero Master)',
+    nameEn: 'Hero Master Image',
+    icon: '🖼️',
+    description: 'صورة منتج مركزة بنقاء فائق مع شارة السعر وعنوان كويتي عريض',
+    color: '#F59E0B', // amber-500
+  },
+  {
+    id: 'video_reels',
+    name: 'فيديو وريلز عمودي 9:16',
+    nameEn: 'Video & Reels 9:16',
+    icon: '🎬',
+    description: 'مقاطع فيديو سريعة ريتم 120 BPM مع صوت كويتي معتمد',
+    color: '#10B981', // emerald-500
+  },
+  {
+    id: 'kashta_lifestyle',
+    name: 'نمط حياة وكشتات (Lifestyle)',
+    nameEn: 'Kashta & Lifestyle',
+    icon: '⛺',
+    description: 'صور واقعية في صحراء الكويت ومخيمات المطلاع والصبية',
+    color: '#0EA5E9', // sky-500
+  },
+  {
+    id: 'promo_offer',
+    name: 'عروض وتخفيضات (Mega Promo)',
+    nameEn: 'Retail Mega Promo',
+    icon: '🔥',
+    description: 'ملصقات خصومات قوية وسعر بارز بالدينار الكويتي للتحويل الفوري',
+    color: '#EC4899', // pink-500
+  },
+  {
+    id: 'feature_focus',
+    name: 'مواصفات وسرعة شحن (Specs Focus)',
+    nameEn: 'Feature & Tech Focus',
+    icon: '⚡',
+    description: 'تركيز دقيق على سعة البطارية، منافذ AC، وكفالة الوكيل',
+    color: '#8B5CF6', // purple-500
+  },
+  {
+    id: 'story_card',
+    name: 'بطاقة ستوري تفاعلية (Story Card)',
+    nameEn: 'Interactive Story Card',
+    icon: '📱',
+    description: 'تصاميم بطاقات عائمة سفلية مخصصة لسناب شات وإنستغرام ستوري',
+    color: '#F97316', // orange-500
+  },
+];
+
+export const INITIAL_CAMPAIGNS: CampaignRecord[] = [
+  {
+    id: 'camp-01',
+    title: 'حملة كهربتك معاك - انستغرام فيد',
+    productName: 'BLUETTI AC200MAX V2 Power Station',
+    productId: 'bluetti-ac200max',
+    contentType: 'hero_image',
+    contentTypeName: 'إعلان بطل رئيسي (Hero Master)',
+    placement: 'feed_4_5',
+    platform: 'Instagram',
+    priceKWD: 289,
+    originalPriceKWD: 340,
+    adCopy: {
+      headline: 'كهربتك معاك… وين ما تروح ⚡',
+      subtext: 'سعة جبارة 2048Wh وشحن فائق السرعة لأقسى درجات الحرارة.',
+      cta: 'شناطر؟ اطلب الحين',
+      badge: 'الأكثر مبيعاً في الكويت 🇰🇼',
+    },
+    sourceUrl: 'https://instagram.com/p/bluetti_kuwait_ac200max_offer',
+    adVisualUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80',
+    impressionsEstimated: 45200,
+    clicksEstimated: 3240,
+    conversionsEstimated: 142,
+    status: 'ACTIVE',
+    createdAt: '2026-10-18',
+  },
+  {
+    id: 'camp-02',
+    title: 'ريلز كشتة الصبية والمطلاع - تيك توك 9:16',
+    productName: 'BLUETTI AC200MAX V2 Power Station',
+    productId: 'bluetti-ac200max',
+    contentType: 'video_reels',
+    contentTypeName: 'فيديو وريلز عمودي 9:16',
+    placement: 'story_9_16',
+    platform: 'TikTok',
+    priceKWD: 289,
+    originalPriceKWD: 340,
+    adCopy: {
+      headline: 'عزبتك ما تكتمل بدونها! 🔥',
+      subtext: 'شغل أجهزتك وإضاءتك كلها براحة بال وبكفالة الوكيل المعتمد.',
+      cta: 'اطلب عبر الواتساب فوراً',
+      badge: 'وفر 15% اليوم',
+    },
+    sourceUrl: 'https://tiktok.com/@bluetti/video/fast_charge_desert_challenge',
+    adVisualUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80',
+    impressionsEstimated: 68400,
+    clicksEstimated: 5120,
+    conversionsEstimated: 210,
+    status: 'ACTIVE',
+    createdAt: '2026-10-19',
+  },
+  {
+    id: 'camp-03',
+    title: 'شاحن بطارية السيارة السريع - ستوري سناب شات',
+    productName: 'BLUETTI Charger 2 DC-DC Fast Solar',
+    productId: 'bluetti-charger-2',
+    contentType: 'feature_focus',
+    contentTypeName: 'مواصفات وسرعة شحن (Specs Focus)',
+    placement: 'story_9_16',
+    platform: 'Snapchat',
+    priceKWD: 79,
+    originalPriceKWD: 95,
+    adCopy: {
+      headline: 'شحن أسرع بـ 6 أضعاف ⚡',
+      subtext: 'اشحن محطتك مباشرة من دينامو سيارتك بقدرة 560W خلال القيادة.',
+      cta: 'اطلب الحين مع التوصيل',
+      badge: 'جديد بالكامل',
+    },
+    sourceUrl: 'https://snapchat.com/ad/bluetti_charger_2_kuwait',
+    adVisualUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+    impressionsEstimated: 31000,
+    clicksEstimated: 1980,
+    conversionsEstimated: 88,
+    status: 'ACTIVE',
+    createdAt: '2026-10-20',
+  },
+  {
+    id: 'camp-04',
+    title: 'عرض الويكند: ثلاجة كشتات 45L - انستغرام ستوري',
+    productName: 'ثلاجة رحلات وتخييم 45 لتر ضاغط فائق',
+    productId: 'camping-fridge-45l',
+    contentType: 'promo_offer',
+    contentTypeName: 'عروض وتخفيضات (Mega Promo)',
+    placement: 'story_9_16',
+    platform: 'Instagram',
+    priceKWD: 139,
+    originalPriceKWD: 175,
+    adCopy: {
+      headline: 'ثلجك جاهز بنص ساعة! ❄️',
+      subtext: 'ضاغط ألماني فائق الهدوء وكفالة الوكيل المعتمد في الكويت سنتين.',
+      cta: 'احجز ثلاجتك قبل نفاد الكمية',
+      badge: 'خصم خاص 20%',
+    },
+    sourceUrl: 'https://outdoorkw.com/products/ice-fridge-45l-compressor',
+    adVisualUrl: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=800&q=80',
+    impressionsEstimated: 29500,
+    clicksEstimated: 2450,
+    conversionsEstimated: 95,
+    status: 'ACTIVE',
+    createdAt: '2026-10-20',
+  },
+  {
+    id: 'camp-05',
+    title: 'طاقة دايمة لطلعات البحر والبر - واتساب وبرودكاست',
+    productName: 'BLUETTI AC200MAX V2 Power Station',
+    productId: 'bluetti-ac200max',
+    contentType: 'kashta_lifestyle',
+    contentTypeName: 'نمط حياة وكشتات (Lifestyle)',
+    placement: 'feed_4_5',
+    platform: 'WhatsApp',
+    priceKWD: 289,
+    originalPriceKWD: 340,
+    adCopy: {
+      headline: 'طاقة دايمة لطلعات البحر والبر ⚓',
+      subtext: 'تحمل استثنائي للحرارة ومنافذ طاقة نقية تحمي أجهزتك الحساسة.',
+      cta: 'تواصل مباشرة عبر الواتساب',
+      badge: 'توصيل فوري لجميع المناطق',
+    },
+    sourceUrl: 'https://outdoorkw.com/offers/desert-sea-power',
+    adVisualUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    impressionsEstimated: 18200,
+    clicksEstimated: 2150,
+    conversionsEstimated: 110,
+    status: 'ACTIVE',
+    createdAt: '2026-10-21',
+  },
+  {
+    id: 'camp-06',
+    title: 'بطاقة عرض سريعة - درون تصوير جوي 4K',
+    productName: 'طائرة درون للتصوير الجوي الاحترافي 4K',
+    productId: 'drone-4k-pro',
+    contentType: 'story_card',
+    contentTypeName: 'بطاقة ستوري تفاعلية (Story Card)',
+    placement: 'story_9_16',
+    platform: 'Snapchat',
+    priceKWD: 165,
+    originalPriceKWD: 195,
+    adCopy: {
+      headline: 'صوّر طلعاتك وبرك بدقة 4K سينمائية 🚁',
+      subtext: 'مقاومة عالية للرياح وحساسات تصادم مع كفالة شاملة.',
+      cta: 'شناطر؟ اطلب الحين',
+      badge: 'الأحدث في الكويت',
+    },
+    sourceUrl: 'https://xcite.com/kw/dji_mini_4_pro_drone_combo',
+    adVisualUrl: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=800&q=80',
+    impressionsEstimated: 38700,
+    clicksEstimated: 2890,
+    conversionsEstimated: 104,
+    status: 'ACTIVE',
+    createdAt: '2026-10-21',
   },
 ];
 

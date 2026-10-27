@@ -5,17 +5,24 @@ import { VideoAdsEngine } from './components/VideoAdsEngine';
 import { ProductVault } from './components/ProductVault';
 import { BrandDNASettings } from './components/BrandDNASettings';
 import { CopyAndDialectStudio } from './components/CopyAndDialectStudio';
+import { AdContentAnalytics } from './components/AdContentAnalytics';
+import { ImportAdByUrlModal } from './components/ImportAdByUrlModal';
 import { 
   INITIAL_BRAND_DNA, 
-  INITIAL_PRODUCTS 
+  INITIAL_PRODUCTS,
+  INITIAL_CAMPAIGNS
 } from './data/mockData';
-import { BrandDNA, ProductItem } from './types/adcraft';
+import { BrandDNA, ProductItem, CampaignRecord } from './types/adcraft';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<'studio' | 'video' | 'products' | 'brand' | 'dialect_qa'>('video');
+  const [currentTab, setCurrentTab] = useState<'studio' | 'video' | 'products' | 'brand' | 'dialect_qa' | 'analytics'>('analytics');
   const [brand, setBrand] = useState<BrandDNA>(INITIAL_BRAND_DNA);
   const [products, setProducts] = useState<ProductItem[]>(INITIAL_PRODUCTS);
   const [activeProduct, setActiveProduct] = useState<ProductItem>(INITIAL_PRODUCTS[0]);
+  const [campaigns, setCampaigns] = useState<CampaignRecord[]>(INITIAL_CAMPAIGNS);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+  const [appliedCopy, setAppliedCopy] = useState<{ headline: string; subtext: string; cta: string; badge: string } | null>(null);
 
   const handleSelectProductForCampaign = (prod: ProductItem) => {
     setActiveProduct(prod);
@@ -27,8 +34,36 @@ export default function App() {
     setActiveProduct(newProd);
   };
 
+  const handleAddNewAdFromUrl = (newProd: ProductItem, newCampaign: CampaignRecord) => {
+    setProducts((prev) => [newProd, ...prev]);
+    setActiveProduct(newProd);
+    setCampaigns((prev) => [newCampaign, ...prev]);
+  };
+
+  const handleSelectCampaignForStudio = (campaign: CampaignRecord) => {
+    const matchedProduct = products.find((p) => p.id === campaign.productId);
+    if (matchedProduct) {
+      setActiveProduct(matchedProduct);
+    }
+    setAppliedCopy({
+      headline: campaign.adCopy.headline,
+      subtext: campaign.adCopy.subtext,
+      cta: campaign.adCopy.cta,
+      badge: campaign.adCopy.badge,
+    });
+    setCurrentTab('studio');
+  };
+
+  const handleSelectCampaignForVideo = (campaign: CampaignRecord) => {
+    const matchedProduct = products.find((p) => p.id === campaign.productId);
+    if (matchedProduct) {
+      setActiveProduct(matchedProduct);
+    }
+    setCurrentTab('video');
+  };
+
   const handleApplyCopyFromQA = (headline: string, subtext: string, cta: string, badge: string) => {
-    // Switch to studio with pre-selected headline
+    setAppliedCopy({ headline, subtext, cta, badge });
     setCurrentTab('studio');
   };
 
@@ -36,6 +71,8 @@ export default function App() {
     setBrand(INITIAL_BRAND_DNA);
     setProducts(INITIAL_PRODUCTS);
     setActiveProduct(INITIAL_PRODUCTS[0]);
+    setCampaigns(INITIAL_CAMPAIGNS);
+    setAppliedCopy(null);
   };
 
   return (
@@ -55,6 +92,8 @@ export default function App() {
             activeProduct={activeProduct}
             onSelectProduct={setActiveProduct}
             onAddNewProduct={handleAddNewProduct}
+            appliedCopy={appliedCopy}
+            onOpenImportModal={() => setIsImportModalOpen(true)}
           />
         )}
 
@@ -87,7 +126,27 @@ export default function App() {
             onApplyCopy={handleApplyCopyFromQA}
           />
         )}
+
+        {currentTab === 'analytics' && (
+          <AdContentAnalytics
+            campaigns={campaigns}
+            products={products}
+            onSelectCampaignForStudio={handleSelectCampaignForStudio}
+            onSelectCampaignForVideo={handleSelectCampaignForVideo}
+            onAddNewAdFromUrl={handleAddNewAdFromUrl}
+            onOpenImportModal={() => setIsImportModalOpen(true)}
+            isImportModalOpen={isImportModalOpen}
+            onCloseImportModal={() => setIsImportModalOpen(false)}
+          />
+        )}
       </main>
+
+      {/* Global Import Ad By URL Modal */}
+      <ImportAdByUrlModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSaveNewAd={handleAddNewAdFromUrl}
+      />
 
       {/* Footer info bar */}
       <footer className="border-t border-zinc-900 bg-zinc-950/80 px-4 py-4 text-xs text-zinc-500 text-center">

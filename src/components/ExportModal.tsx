@@ -11,7 +11,10 @@ import {
   FileCheck2,
   Smartphone,
   Layers,
-  ImageDown
+  ImageDown,
+  FileText,
+  FileDown,
+  Printer
 } from 'lucide-react';
 import { exportElementAsPng } from '../utils/exportImage';
 import { ProductItem, BrandDNA, AdPlacement } from '../types/adcraft';
@@ -25,6 +28,7 @@ interface ExportModalProps {
   headline: string;
   subtext: string;
   ctaText: string;
+  onOpenPdfModal?: () => void;
 }
 
 export const ExportModal: React.FC<ExportModalProps> = ({
@@ -36,6 +40,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   headline,
   subtext,
   ctaText,
+  onOpenPdfModal,
 }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [downloadSuccessType, setDownloadSuccessType] = useState<string | null>(null);
@@ -125,9 +130,9 @@ ${ctaText}
           <FileCheck2 className="w-4 h-4" />
           الحملة معتمدة وجاهزة للنشر والتصدير
         </div>
-        <h3 className="text-2xl font-bold text-white mb-2">تصدير معاينة الإعلان والكابشن (PNG)</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">تصدير الحملة: صور (PNG)، نصوص، ووثيقة المراجعة (PDF)</h3>
         <p className="text-xs text-zinc-400 mb-6">
-          يمكنك حفظ وتحميل التصميم الماستر بدقة 2X، أو تصدير معاينة شاشة العرض التفاعلية كملف صورة PNG لحفظ عملك.
+          يمكنك حفظ التصميم الماستر بدقة 2X، نسخ الكابشن الجاهز، أو استخراج وثيقة A4 الرسمية (PDF) للمراجعة الميدانية والاعتماد الأوفلاين.
         </p>
 
         {exportError && (
@@ -136,6 +141,42 @@ ${ctaText}
             <button onClick={() => setExportError(null)} className="text-rose-400 hover:text-white">إغلاق</button>
           </div>
         )}
+
+        {/* FEATURE: A4 PDF Offline Review Dossier Hero Card */}
+        <div className="mb-6 p-4 sm:p-5 bg-gradient-to-r from-amber-950/50 via-zinc-900 to-zinc-900 border border-amber-500/50 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+          <div className="flex items-start gap-3.5">
+            <div className="p-2.5 bg-amber-500/20 border border-amber-500/40 rounded-xl text-amber-400 shrink-0 mt-0.5">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm font-bold text-white">وثيقة مسودة الحملة للمراجعة الأوفلاين (PDF A4)</span>
+                <span className="text-[10px] font-mono bg-amber-500 text-zinc-950 font-black px-2 py-0.5 rounded">
+                  A4 PORTRAIT SPEC
+                </span>
+                <span className="text-[10px] text-emerald-400 border border-emerald-500/30 bg-emerald-950/40 px-2 py-0.5 rounded hidden sm:inline-block">
+                  جاهز للطباعة والاعتماد
+                </span>
+              </div>
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                ملف بريف متكامل يتضمن التصميم الإعلاني، النصوص والكابشن، المواصفات الفنية، التسعير، وقائمة فحص واعتماد الجودة والتوقيع.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+            <button
+              onClick={() => {
+                onClose();
+                onOpenPdfModal?.();
+              }}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-amber-950/40 cursor-pointer"
+            >
+              <FileDown className="w-4 h-4" />
+              <span>معاينة وتصدير PDF 📄</span>
+            </button>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Export Action Card */}
@@ -157,13 +198,13 @@ ${ctaText}
               <button
                 onClick={() => handleDownloadPng('master')}
                 disabled={isExporting}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-lg shadow-amber-950/30"
+                className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-750 border border-amber-500/40 text-amber-300 font-bold py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-md"
               >
                 {isExporting && downloadSuccessType === null ? (
                   <span>جاري معالجة الصورة عالية الدقة...</span>
                 ) : downloadSuccessType === 'master' ? (
                   <>
-                    <Check className="w-4 h-4 text-zinc-950" />
+                    <Check className="w-4 h-4 text-emerald-400" />
                     <span>تم حفظ التصميم الماستر (PNG)!</span>
                   </>
                 ) : (

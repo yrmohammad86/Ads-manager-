@@ -9,13 +9,14 @@ import {
   MessageSquare,
   CheckCircle2,
   ChevronDown,
-  Film
+  Film,
+  BarChart3
 } from 'lucide-react';
 import { BrandDNA } from '../types/adcraft';
 
 interface HeaderProps {
-  currentTab: 'studio' | 'video' | 'products' | 'brand' | 'dialect_qa';
-  onTabChange: (tab: 'studio' | 'video' | 'products' | 'brand' | 'dialect_qa') => void;
+  currentTab: 'studio' | 'video' | 'products' | 'brand' | 'dialect_qa' | 'analytics';
+  onTabChange: (tab: 'studio' | 'video' | 'products' | 'brand' | 'dialect_qa' | 'analytics') => void;
   brand: BrandDNA;
   onResetToDemo: () => void;
 }
@@ -145,6 +146,19 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <MessageSquare className="w-4 h-4" />
               <span>مدقق اللهجة و QC 🇰🇼</span>
+            </button>
+
+            <button
+              onClick={() => onTabChange('analytics')}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-medium transition-all relative ${
+                currentTab === 'analytics'
+                  ? 'bg-amber-500 text-zinc-950 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-emerald-400" />
+              <span>الإحصائيات والتحليلات 📊</span>
+              <span className="bg-emerald-500 text-zinc-950 text-[9px] px-1 py-0.2 rounded font-bold">جديد</span>
             </button>
           </nav>
 
