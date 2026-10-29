@@ -5,7 +5,8 @@ import {
   CreativeConcept, 
   AdPlacement, 
   BackgroundScene,
-  LayoutPreset
+  LayoutPreset,
+  CampaignRecord
 } from '../types/adcraft';
 import { 
   CREATIVE_CONCEPTS, 
@@ -43,7 +44,9 @@ import {
   Plus,
   FileText,
   FileDown,
-  Link2
+  Link2,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import { AIProductAdGeneratorModal } from './AIProductAdGeneratorModal';
 import { CampaignPdfModal } from './CampaignPdfModal';
@@ -56,6 +59,7 @@ interface CampaignStudioProps {
   onAddNewProduct?: (newProduct: ProductItem) => void;
   appliedCopy?: { headline: string; subtext: string; cta: string; badge: string } | null;
   onOpenImportModal?: () => void;
+  campaigns?: CampaignRecord[];
 }
 
 export const CampaignStudio: React.FC<CampaignStudioProps> = ({
@@ -66,6 +70,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   onAddNewProduct,
   appliedCopy,
   onOpenImportModal,
+  campaigns = [],
 }) => {
   // Studio selections
   const [selectedLayoutPreset, setSelectedLayoutPreset] = useState<LayoutPreset>(LAYOUT_PRESETS[0]);
@@ -96,12 +101,49 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   const [isQCModalOpen, setIsQCModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+  const [pdfInitialMode, setPdfInitialMode] = useState<'single' | 'multi'>('single');
   const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
   const [isCampaignApproved, setIsCampaignApproved] = useState(false);
   const [approvalToast, setApprovalToast] = useState<string | null>(null);
   const [generationToast, setGenerationToast] = useState<string | null>(null);
   const [studioViewMode, setStudioViewMode] = useState<'split' | 'live_preview'>('split');
   const [isQuickExportingPng, setIsQuickExportingPng] = useState(false);
+
+  // Multi-campaign selection state
+  const [selectedCampaigns, setSelectedCampaigns] = useState<CampaignRecord[]>(campaigns);
+
+  // Keep selected campaigns in sync when campaigns list updates
+  useEffect(() => {
+    if (campaigns && campaigns.length > 0) {
+      setSelectedCampaigns((prev) => {
+        if (prev.length === 0) return campaigns;
+        const valid = prev.filter((p) => campaigns.some((c) => c.id === p.id));
+        return valid.length > 0 ? valid : campaigns;
+      });
+    }
+  }, [campaigns]);
+
+  const handleToggleCampaignSelect = (camp: CampaignRecord) => {
+    setSelectedCampaigns((prev) => {
+      const exists = prev.some((c) => c.id === camp.id);
+      if (exists) {
+        if (prev.length === 1) return prev; // Keep at least one selected item
+        return prev.filter((c) => c.id !== camp.id);
+      } else {
+        return [...prev, camp];
+      }
+    });
+  };
+
+  const handleSelectAllCampaigns = () => {
+    setSelectedCampaigns(campaigns);
+  };
+
+  const handleDeselectAllCampaigns = () => {
+    if (campaigns.length > 0) {
+      setSelectedCampaigns([campaigns[0]]);
+    }
+  };
 
   // Sync copy applied from Copy & Dialect Studio
   useEffect(() => {
@@ -289,15 +331,36 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             <span>{isQuickExportingPng ? 'جاري التحميل...' : 'حفظ كصورة (PNG)'}</span>
           </button>
 
-          {/* Direct Campaign PDF Dossier Export Button */}
+          {/* Direct Campaign PDF Dossier Export Button (Single Draft) */}
           <button
-            onClick={() => setIsPdfModalOpen(true)}
-            className="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-750 border border-amber-500/50 text-amber-300 font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-amber-500/10"
-            title="تصدير مسودة الحملة كوثيقة A4 PDF للمراجعة الأوفلاين والاعتماد"
+            onClick={() => {
+              setPdfInitialMode('single');
+              setIsPdfModalOpen(true);
+            }}
+            className="flex items-center gap-1.5 bg-[#131E35] hover:bg-[#1E2B4A] border border-amber-500/50 text-amber-300 font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-amber-500/10 cursor-pointer"
+            title="تصدير مسودة الحملة الحالية كوثيقة A4 PDF للمراجعة الأوفلاين والاعتماد"
           >
             <FileText className="w-3.5 h-3.5 text-amber-400" />
-            <span>تقرير الحملة (PDF Dossier)</span>
+            <span>تقرير المسودة (PDF)</span>
           </button>
+
+          {/* Multi-Campaign Unified PDF Dossier Button */}
+          {campaigns && campaigns.length > 0 && (
+            <button
+              onClick={() => {
+                setPdfInitialMode('multi');
+                setIsPdfModalOpen(true);
+              }}
+              className="flex items-center gap-1.5 bg-[#131E35] hover:bg-[#1E2B4A] border border-violet-500/60 text-violet-300 font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-violet-500/15 cursor-pointer"
+              title="تحديد عدة حملات وتصديرها كملف PDF مجمع من عدة صفحات A4"
+            >
+              <Layers className="w-3.5 h-3.5 text-violet-400" />
+              <span>تصدير الحملات المحددة ({selectedCampaigns.length}) PDF 📄</span>
+              <span className="text-[10px] bg-violet-950 text-violet-300 border border-violet-700/60 px-1.5 py-0.2 rounded-full font-mono">
+                {selectedCampaigns.length} / {campaigns.length}
+              </span>
+            </button>
+          )}
 
           {/* Import Ad from URL Button */}
           {onOpenImportModal && (
@@ -392,6 +455,102 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             >
               إغلاق
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Multi-Campaign Selection Bar / Tray for Unified PDF Export */}
+      {campaigns && campaigns.length > 0 && (
+        <div className="mb-6 bg-[#0D1424] border border-[#1E2B4A] rounded-2xl p-4 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1E2B4A]/80">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/40 flex items-center justify-center text-violet-400 shrink-0">
+                <Layers className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs sm:text-sm font-bold text-white">
+                    تحديد الحملات للتصدير المجمع (Multi-Campaign Selection)
+                  </h3>
+                  <span className="text-[11px] font-mono bg-violet-950/80 text-violet-300 border border-violet-500/40 px-2 py-0.5 rounded-full">
+                    تم اختيار {selectedCampaigns.length} من أصل {campaigns.length}
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5">
+                  حدد الحملات المراد دمجها كملف PDF موحد؛ كل حملة ستحصل على صفحة A4 مخصصة بمواصفاتها ونصوصها وقفل المنتج.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={handleSelectAllCampaigns}
+                className="text-[11px] font-bold text-amber-400 hover:text-amber-300 bg-[#131E35] hover:bg-[#1E2B4A] border border-[#1E2B4A] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+              >
+                تحديد الكل ✓
+              </button>
+              <button
+                type="button"
+                onClick={handleDeselectAllCampaigns}
+                className="text-[11px] font-bold text-zinc-400 hover:text-white bg-[#131E35] hover:bg-[#1E2B4A] border border-[#1E2B4A] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+              >
+                تحديد واحدة فقط
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPdfInitialMode('multi');
+                  setIsPdfModalOpen(true);
+                }}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                <FileDown className="w-3.5 h-3.5" />
+                <span>تصدير المحددة ({selectedCampaigns.length}) PDF 📄</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Horizontal Scrollable Campaign Cards */}
+          <div className="flex items-center gap-2.5 overflow-x-auto pt-3 pb-1 scrollbar-thin">
+            {campaigns.map((camp) => {
+              const isSelected = selectedCampaigns.some((c) => c.id === camp.id);
+              return (
+                <div
+                  key={camp.id}
+                  onClick={() => handleToggleCampaignSelect(camp)}
+                  className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-right transition-all cursor-pointer shrink-0 select-none ${
+                    isSelected
+                      ? 'bg-[#131E35] border-violet-500 shadow-md ring-1 ring-violet-500/50'
+                      : 'bg-[#080C16] border-[#1E2B4A] opacity-60 hover:opacity-100 hover:border-zinc-700'
+                  }`}
+                  style={{ minWidth: '240px', maxWidth: '300px' }}
+                >
+                  <div className="text-violet-400 shrink-0">
+                    {isSelected ? (
+                      <CheckSquare className="w-4 h-4 text-violet-400" />
+                    ) : (
+                      <Square className="w-4 h-4 text-zinc-500" />
+                    )}
+                  </div>
+
+                  <div className="w-10 h-10 rounded-lg bg-black/40 border border-zinc-800 overflow-hidden shrink-0">
+                    <img src={camp.adVisualUrl} alt={camp.title} className="w-full h-full object-cover" />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-bold text-white truncate">{camp.productName}</span>
+                      <span className="text-[9px] font-mono bg-zinc-800 text-zinc-300 px-1 py-0.2 rounded shrink-0">
+                        {camp.platform}
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 truncate mt-0.5">{camp.adCopy.headline}</div>
+                    <div className="text-[10px] font-mono text-amber-400 mt-0.5">{camp.priceKWD} د.ك</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -934,6 +1093,10 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         subtext={subtext}
         badge={badge}
         ctaText={ctaText}
+        campaigns={campaigns}
+        selectedCampaigns={selectedCampaigns}
+        allProducts={products}
+        initialMode={pdfInitialMode}
       />
 
       {/* AI Product & Ad Generator Modal */}

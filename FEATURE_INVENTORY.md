@@ -79,6 +79,29 @@ This document provides a component-by-component, feature-by-feature inventory of
 | **PNG Master Export** | **IMPLEMENTED** | High-resolution 2x master graphic capture for direct social posting. |
 | **Ready-to-Post Caption** | **IMPLEMENTED** | 1-click caption copy with emojis, specs, price, WhatsApp link, and Kuwait hashtags. |
 
+### 2.8 Executive Dashboard (`src/components/ExecutiveDashboard.tsx`)
+| Feature | Implementation State | Description |
+| :--- | :--- | :--- |
+| **Executive SaaS KPI Tiles** | **IMPLEMENTED** | Real-time campaign counters, dialect authenticity score (96.4%), and Product Lock verification. |
+| **Rapid Production Command Center**| **IMPLEMENTED** | Quick launch actions for URL-to-Ad, Image Studio, Video Director, Voice Studio, and PDF Dossier. |
+| **Recent Creations Grid** | **IMPLEMENTED** | Visual feed of active campaigns with instant 1-click routing to Studio or Video engines. |
+
+### 2.9 Dedicated Voice Studio (`src/components/VoiceStudioView.tsx`)
+| Feature | Implementation State | Description |
+| :--- | :--- | :--- |
+| **6-Stage Structured Pipeline**| **IMPLEMENTED** | Strict, clean progression: Ingestion -> Profile -> Acoustic Tuning -> Script -> Preview -> Approval. |
+| **Voice Persona Selector** | **IMPLEMENTED** | Kuwaiti Dialect Merchant, Reels High-Energy, Kashta Adventurer, and Calm VIP Luxury. |
+| **Acoustic Calibration Controls**| **IMPLEMENTED** | AI noise reduction, bass warmth, treble air boost, and tone evaluation score via `/api/evaluate-voice-tone`. |
+| **Synthetic Ad Voice Cloning** | **HYBRID** | Synthesizes full 15s commercial scripts using `/api/clone-and-synthesize` with verified legal consent. |
+| **Interactive Waveform Player** | **IMPLEMENTED** | 32-bar reactive waveform visualizer, playhead scrubbing, and volume controls. |
+
+### 2.10 URL-to-Ad Production Engine (`src/components/ImportAdByUrlModal.tsx`)
+| Feature | Implementation State | Description |
+| :--- | :--- | :--- |
+| **Prominent Global Quick-Launch**| **IMPLEMENTED** | Dedicated header button accessible from anywhere in the application. |
+| **Verified vs. Inferred Badges**| **IMPLEMENTED** | Distinguishes verified scraped data (green badge) from suggested dialect copy (violet badge). |
+| **Interactive Manual Editor** | **IMPLEMENTED** | Complete live editing of pricing, discounts, warranty, SKU, and specifications. |
+
 ---
 
 ## 3. Database & Storage Status

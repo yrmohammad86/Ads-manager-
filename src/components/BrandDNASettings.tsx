@@ -36,13 +36,13 @@ export const BrandDNASettings: React.FC<BrandDNASettingsProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-zinc-800 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-[#1E2B4A] gap-4">
         <div>
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">
-            <Palette className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-violet-400 text-xs font-semibold uppercase tracking-wider mb-1">
+            <Palette className="w-4 h-4 text-violet-400" />
             Brand DNA • الحمض النووي للعلامة التجارية
           </div>
-          <h2 className="text-2xl font-bold text-white">هوية البراند وإطار التاجر الثابت (Fixed Frame)</h2>
+          <h2 className="text-2xl font-bold text-white tracking-tight">هوية البراند وإطار التاجر الثابت (Fixed Frame)</h2>
           <p className="text-sm text-zinc-400 mt-1">
             يقوم نظام AdCraft بفهم هوية متجرك وألوانه ووسائل التواصل مرة واحدة، لتظهر متناسقة في كل إعلان وحملة تلقائياً.
           </p>
@@ -52,7 +52,7 @@ export const BrandDNASettings: React.FC<BrandDNASettingsProps> = ({
           <button
             type="button"
             onClick={onResetDefault}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-850 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#131C31] hover:bg-[#1A2642] text-zinc-300 border border-[#1E2B4A] text-xs font-medium transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             استعادة نموذج تجربة Outdoor Kuwait
@@ -64,9 +64,9 @@ export const BrandDNASettings: React.FC<BrandDNASettingsProps> = ({
         {/* Left Form Column */}
         <div className="lg:col-span-7 space-y-6">
           {/* Basic Identity */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-sm">
+          <div className="bg-[#0D1424] border border-[#1E2B4A] rounded-2xl p-6 shadow-sm">
             <h3 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span className="w-2 h-2 rounded-full bg-violet-500"></span>
               البيانات الأساسية ونبرة البراند
             </h3>
 

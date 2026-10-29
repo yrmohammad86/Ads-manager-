@@ -166,16 +166,16 @@ export const AdContentAnalytics: React.FC<AdContentAnalyticsProps> = ({
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 space-y-8">
       {/* Top Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-zinc-800 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-[#1E2B4A] gap-4">
         <div>
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">
-            <BarChart3 className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-violet-400 text-xs font-semibold uppercase tracking-wider mb-1">
+            <BarChart3 className="w-4 h-4 text-emerald-400" />
             Ad Content Types & Performance Analytics 📊
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
             <span>لوحة إحصائيات توزيع أنواع المحتوى الإعلاني</span>
-            <span className="text-xs bg-amber-950/70 text-amber-400 border border-amber-800/60 px-2.5 py-0.5 rounded-full font-mono">
-              Recharts Engine
+            <span className="text-xs bg-violet-950/80 text-violet-300 border border-violet-800/60 px-2.5 py-0.5 rounded-full font-mono">
+              Recharts Analytics Pro
             </span>
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 mt-1">
@@ -187,9 +187,9 @@ export const AdContentAnalytics: React.FC<AdContentAnalyticsProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenImportModal}
-            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-zinc-950 font-black px-5 py-3 rounded-2xl text-xs sm:text-sm shadow-xl shadow-amber-950/40 transition-all cursor-pointer transform hover:scale-[1.02]"
+            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold px-5 py-3 rounded-2xl text-xs sm:text-sm shadow-xl shadow-violet-950/40 transition-all cursor-pointer transform hover:scale-[1.02]"
           >
-            <Link2 className="w-4 h-4" />
+            <Link2 className="w-4 h-4 text-amber-300" />
             <span>إضافة إعلان عن طريق الرابط 🔗</span>
           </button>
         </div>
@@ -198,44 +198,44 @@ export const AdContentAnalytics: React.FC<AdContentAnalyticsProps> = ({
       {/* KPI METRIC CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1 */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+        <div className="bg-[#0D1424] border border-[#1E2B4A] rounded-2xl p-5 shadow-sm space-y-2">
           <span className="text-xs text-zinc-400 block font-medium">إجمالي الحملات الحالية:</span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-white font-mono">{totalCampaigns}</span>
+            <span className="text-3xl font-black text-white font-mono tabular-nums">{totalCampaigns}</span>
             <span className="text-xs text-emerald-400 font-bold">حملة نشطة ⚡</span>
           </div>
           <span className="text-[11px] text-zinc-500 block">موزعة على كافة المقاسات والمنصات</span>
         </div>
 
         {/* Metric 2 */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+        <div className="bg-[#0D1424] border border-[#1E2B4A] rounded-2xl p-5 shadow-sm space-y-2">
           <span className="text-xs text-zinc-400 block font-medium">نوع المحتوى الأكثر استخداماً:</span>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-amber-400 flex items-center gap-1.5">
+            <span className="text-xl font-bold text-violet-400 flex items-center gap-1.5">
               <span>{topContentType?.icon || '🖼️'}</span>
               <span className="truncate max-w-[150px]">{topContentType?.name.split('(')[0] || 'Hero Master'}</span>
             </span>
           </div>
-          <span className="text-[11px] text-zinc-500 block font-mono">
+          <span className="text-[11px] text-zinc-500 block font-mono tabular-nums">
             {topContentType?.percentage || 0}% من إجمالي المحتوى الإعلاني
           </span>
         </div>
 
         {/* Metric 3 */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+        <div className="bg-[#0D1424] border border-[#1E2B4A] rounded-2xl p-5 shadow-sm space-y-2">
           <span className="text-xs text-zinc-400 block font-medium">متوسط أسعار المنتجات:</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-black text-white font-mono">{avgPriceKWD}</span>
+            <span className="text-3xl font-black text-white font-mono tabular-nums">{avgPriceKWD}</span>
             <span className="text-sm font-bold text-amber-400">د.ك KWD</span>
           </div>
           <span className="text-[11px] text-zinc-500 block">أسعار معتمدة ومطابقة لكتالوج الوكيل</span>
         </div>
 
         {/* Metric 4 */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+        <div className="bg-[#0D1424] border border-[#1E2B4A] rounded-2xl p-5 shadow-sm space-y-2">
           <span className="text-xs text-zinc-400 block font-medium">إعلانات مستوردة بالرابط:</span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-sky-400 font-mono">{importedCount}</span>
+            <span className="text-3xl font-black text-sky-400 font-mono tabular-nums">{importedCount}</span>
             <span className="text-xs text-zinc-400">إعلان مستورد</span>
           </div>
           <span className="text-[11px] text-emerald-400 flex items-center gap-1">

@@ -32,6 +32,10 @@ export interface CampaignPdfDocumentProps {
   onToggleChecklist?: (id: string) => void;
   reviewerNotes?: string;
   isInteractivePreview?: boolean;
+  pageNumber?: number;
+  totalPages?: number;
+  campaignTitle?: string;
+  containerClassName?: string;
 }
 
 export const CampaignPdfDocument = forwardRef<HTMLDivElement, CampaignPdfDocumentProps>(
@@ -51,6 +55,10 @@ export const CampaignPdfDocument = forwardRef<HTMLDivElement, CampaignPdfDocumen
       onToggleChecklist,
       reviewerNotes = '',
       isInteractivePreview = false,
+      pageNumber,
+      totalPages,
+      campaignTitle,
+      containerClassName = '',
     },
     ref
   ) => {
@@ -97,7 +105,7 @@ export const CampaignPdfDocument = forwardRef<HTMLDivElement, CampaignPdfDocumen
       <div
         ref={ref}
         id="campaign-pdf-printable-brief"
-        className="bg-white text-zinc-900 w-full max-w-[800px] mx-auto p-8 shadow-2xl rounded-sm print:p-6 print:shadow-none print:w-full print:max-w-none text-right font-sans"
+        className={`adcraft-pdf-page bg-white text-zinc-900 w-full max-w-[800px] mx-auto p-8 shadow-2xl rounded-sm print:p-6 print:shadow-none print:w-full print:max-w-none text-right font-sans relative ${containerClassName}`}
         dir="rtl"
         style={{ minHeight: '1120px' }} // Standard A4 portrait ratio
       >
@@ -106,17 +114,27 @@ export const CampaignPdfDocument = forwardRef<HTMLDivElement, CampaignPdfDocumen
           <div className="flex items-start justify-between">
             {/* Right: Brand & Title */}
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                 <span className="bg-amber-500 text-zinc-950 font-black text-xs px-2.5 py-0.5 rounded tracking-wider">
                   ADCRAFT AI
                 </span>
                 <span className="text-xs font-bold text-zinc-500">
                   وثيقة المراجعة والاعتماد الميداني • OFFICIAL CAMPAIGN BRIEF
                 </span>
+                {totalPages && totalPages > 1 && pageNumber && (
+                  <span className="bg-zinc-900 text-amber-400 font-mono font-bold text-xs px-2.5 py-0.5 rounded-full border border-zinc-700">
+                    صفحة {pageNumber} من {totalPages}
+                  </span>
+                )}
               </div>
               <h1 className="text-2xl font-black text-zinc-950 tracking-tight">
                 ملف اعتماد الحملة الإعلانية: {product.name}
               </h1>
+              {campaignTitle && (
+                <div className="text-xs font-bold text-amber-700 mt-0.5">
+                  عنوان الحملة: {campaignTitle}
+                </div>
+              )}
               <p className="text-xs text-zinc-600 mt-1">
                 وثيقة تدقيق شاملة تجمع التصميم الإعلاني المعتمد، النصوص باللهجة الكويتية، المواصفات الفنية، وقائمة التوقيع للمراجعة الأوفلاين.
               </p>
@@ -463,6 +481,14 @@ export const CampaignPdfDocument = forwardRef<HTMLDivElement, CampaignPdfDocumen
             وثيقة سرية خاصة بقسم إعلانات متجر <strong>{brand.name}</strong> • تم الإنشاء بواسطة AdCraft AI Platform
           </div>
           <div className="flex items-center gap-2 mt-1 sm:mt-0 font-mono">
+            {totalPages && totalPages > 1 && pageNumber && (
+              <>
+                <span className="font-bold text-zinc-900 bg-zinc-100 px-2 py-0.5 rounded">
+                  صفحة {pageNumber} من {totalPages}
+                </span>
+                <span>•</span>
+              </>
+            )}
             <span>A4 PORTRAIT SPEC</span>
             <span>•</span>
             <span>KUWAIT MARKET READY 🇰🇼</span>

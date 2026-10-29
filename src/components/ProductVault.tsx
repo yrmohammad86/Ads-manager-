@@ -85,13 +85,13 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-zinc-800 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-[#1E2B4A] gap-4">
         <div>
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">
-            <Lock className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-violet-400 text-xs font-semibold uppercase tracking-wider mb-1">
+            <Lock className="w-4 h-4 text-amber-400" />
             Product Lock 🔒 Vault & Source Verification
           </div>
-          <h2 className="text-2xl font-bold text-white">خزينة المنتجات وقاعدة قفل المنتج</h2>
+          <h2 className="text-2xl font-bold text-white tracking-tight">خزينة المنتجات وقاعدة قفل المنتج</h2>
           <p className="text-sm text-zinc-400 mt-1">
             القاعدة الذهبية في AdCraft AI: <strong className="text-amber-300">«نغيّر المشهد، ولا نغيّر المنتج»</strong>. يتم تثبيت شكل الجهاز الحقيقي ومطابقة مواصفات المصنع لمنع أي تضارب.
           </p>
@@ -100,15 +100,15 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setShowAiModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-amber-400/20 hover:from-amber-500/30 hover:to-amber-400/30 border border-amber-500/60 text-amber-300 font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-md shadow-amber-950/20"
+            className="flex items-center gap-2 bg-[#131C31] hover:bg-[#1A2642] border border-violet-500/50 text-violet-300 font-semibold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md shadow-violet-950/20 cursor-pointer"
           >
-            <Wand2 className="w-4 h-4 text-amber-400" />
+            <Wand2 className="w-4 h-4 text-violet-400" />
             توليد بالذكاء الاصطناعي ✨
           </button>
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-md shadow-amber-950/20"
+            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md shadow-violet-950/30 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             إضافة يدوية للكاتالوج
@@ -122,7 +122,7 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between text-xs text-zinc-400 font-medium px-1">
             <span>المنتجات المفحوصة والمقيدة ({products.length})</span>
-            <span className="text-emerald-400">جميع المنتجات محمية بـ Product Lock 🔒</span>
+            <span className="text-emerald-400 font-mono">جميع المنتجات محمية بـ Product Lock 🔒</span>
           </div>
 
           <div className="space-y-4">
@@ -132,15 +132,15 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
                 <div
                   key={product.id}
                   onClick={() => setSelectedProductDetails(product)}
-                  className={`bg-zinc-900 border rounded-2xl p-4 transition-all cursor-pointer relative overflow-hidden ${
+                  className={`bg-[#0D1424] border rounded-2xl p-4 transition-all cursor-pointer relative overflow-hidden ${
                     isSelected
-                      ? 'border-amber-500 shadow-md shadow-amber-950/30 ring-1 ring-amber-500/50'
-                      : 'border-zinc-800 hover:border-zinc-700 hover:bg-zinc-850'
+                      ? 'border-violet-500 shadow-md shadow-violet-950/40 ring-1 ring-violet-500/40'
+                      : 'border-[#1E2B4A] hover:border-[#2D3F66] hover:bg-[#131C31]'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     {/* Product Thumbnail with Lock Badge */}
-                    <div className="relative w-24 h-24 rounded-xl bg-zinc-950 border border-zinc-800 p-2 shrink-0 flex items-center justify-center overflow-hidden">
+                    <div className="relative w-24 h-24 rounded-xl bg-[#080C16] border border-[#1E2B4A] p-2 shrink-0 flex items-center justify-center overflow-hidden">
                       <img
                         src={product.imageUrl}
                         alt={product.name}

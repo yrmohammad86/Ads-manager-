@@ -19,7 +19,9 @@ import {
   FileCheck2,
   Smartphone,
   CheckCircle2,
-  Share2
+  Share2,
+  Zap,
+  Info
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ProductItem, CampaignRecord, AdContentType } from '../types/adcraft';
@@ -69,25 +71,25 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
   // Preset sample links for instant testing
   const sampleLinks = [
     {
-      title: 'إعلان محطة طاقة شمسية (Bluetti Outdoor)',
+      title: 'محطة طاقة شمسية (Bluetti AC200MAX)',
       url: 'https://instagram.com/p/bluetti_kuwait_ac200max_offer',
       platform: 'Instagram',
       icon: '⚡',
     },
     {
-      title: 'إعلان درون تصوير جوي 4K (DJI Combo)',
+      title: 'درون تصوير جوي 4K (DJI Combo)',
       url: 'https://xcite.com/kw/dji_mini_4_pro_drone_combo',
       platform: 'TikTok',
       icon: '🚁',
     },
     {
-      title: 'إعلان ثلاجة كشتات وتخييم 45L',
+      title: 'ثلاجة كشتات وتخييم 45L',
       url: 'https://outdoorkw.com/products/ice-fridge-45l-compressor',
       platform: 'Instagram',
       icon: '❄️',
     },
     {
-      title: 'إعلان شاحن بطارية سيارة سريع DC-DC',
+      title: 'شاحن بطارية سيارة سريع DC-DC',
       url: 'https://tiktok.com/@bluetti/video/fast_charge_desert_challenge',
       platform: 'TikTok',
       icon: '🔋',
@@ -241,33 +243,35 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-4xl w-full p-5 sm:p-7 text-right shadow-2xl relative my-8 max-h-[92vh] flex flex-col">
+      <div className="bg-[#0D1424] border border-[#202D4C] rounded-3xl max-w-4xl w-full p-5 sm:p-7 text-right shadow-2xl relative my-8 max-h-[92vh] flex flex-col">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 left-5 text-zinc-400 hover:text-white p-1.5 rounded-xl bg-zinc-800/80 transition-colors z-10"
+          className="absolute top-5 left-5 text-zinc-400 hover:text-white p-1.5 rounded-xl bg-[#131C31] hover:bg-[#1A2642] border border-[#1E2B4A] transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
-        <div className="pb-4 border-b border-zinc-800 shrink-0">
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold mb-1">
-            <Link2 className="w-4 h-4" />
-            استيراد وسحب بيانات الإعلان بالذكاء الاصطناعي (AI Ad Link Scraper)
+        <div className="pb-4 border-b border-[#1E2B4A] shrink-0">
+          <div className="flex items-center gap-2 text-violet-400 text-xs font-semibold mb-1">
+            <Zap className="w-4 h-4 text-amber-300" />
+            <span>نظام سحب الإعلانات الذكي • URL-to-Ad Engine</span>
+            <span className="text-zinc-600">|</span>
+            <span className="text-emerald-400 font-mono">Product Lock 🔒 Verified</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-white">
-            إضافة إعلان عن طريق الرابط مع إمكانية التعديل اليدوي
+            تحويل رابط المنتج إلى إعلان متكامل ومطابق للمواصفات
           </h3>
           <p className="text-xs text-zinc-400 mt-1">
-            الصق رابط الإعلان (إنستغرام، تيك توك، صفحة المتجر) وسيقوم النظام بسحب كافة المواصفات والأسعار تلقائياً وتحديث لوحة الإحصائيات البصرية فوراً.
+            الصق رابط الإعلان (إنستغرام، تيك توك، صفحة المتجر) وسيقوم النظام بسحب كافة المواصفات والأسعار وتدقيقها مع إمكانية التعديل اليدوي الكامل.
           </p>
         </div>
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto flex-1 py-4 space-y-6 pr-1 pl-1">
           {/* STEP 1: URL INPUT & SAMPLE LINKS */}
-          <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div className="bg-[#080C16] border border-[#1E2B4A] rounded-2xl p-4 sm:p-5 space-y-4">
             <label className="block text-xs font-bold text-zinc-200">
               رابط الإعلان أو صفحة المنتج (Instagram / TikTok / Store URL):
             </label>
@@ -280,7 +284,7 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                   placeholder="https://instagram.com/p/... أو https://outdoorkw.com/product/..."
                   value={adUrl}
                   onChange={(e) => setAdUrl(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pr-10 pl-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors font-mono"
+                  className="w-full bg-[#0D1424] border border-[#1E2B4A] focus:border-violet-500 rounded-xl pr-10 pl-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none transition-colors font-mono"
                   dir="ltr"
                 />
               </div>
@@ -289,12 +293,12 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                 type="button"
                 onClick={() => handleFetchFromUrl()}
                 disabled={isFetching}
-                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-950/30 shrink-0 transition-all cursor-pointer disabled:opacity-50"
+                className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-violet-950/40 shrink-0 transition-all cursor-pointer disabled:opacity-50"
               >
                 {isFetching ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-                    <span>جاري سحب المواصفات والأسعار...</span>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>جاري فحص الرابط وسحب المواصفات...</span>
                   </>
                 ) : (
                   <>
@@ -319,7 +323,7 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                       setAdUrl(s.url);
                       handleFetchFromUrl(s.url);
                     }}
-                    className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-amber-500/40 text-zinc-300 text-xs px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="bg-[#131C31] hover:bg-[#1A2642] border border-[#1E2B4A] hover:border-violet-500/50 text-zinc-300 text-xs px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>{s.icon}</span>
                     <span className="text-[11px]">{s.title}</span>
@@ -339,26 +343,34 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
             )}
           </div>
 
-          {/* STEP 2: INTERACTIVE MANUAL EDITING & PREVIEW FORM */}
+          {/* STEP 2: VERIFIED VS INFERRED PREVIEW & MANUAL EDITING */}
           {isExtracted && (
             <div className="space-y-5 animate-fade-in">
-              <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
+              {/* Status Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-[#1E2B4A]">
                 <div className="flex items-center gap-2">
                   <Edit3 className="w-4 h-4 text-emerald-400" />
                   <span className="text-sm font-bold text-white">
-                    مراجعة وتعديل بيانات الإعلان يدوياً (Manual Customization)
+                    تدقيق البيانات المسحوبة والتعديل اليدوي
                   </span>
                 </div>
-                <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono">
-                  تم سحب البيانات بنجاح ✓
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800/60 px-2 py-0.5 rounded font-mono flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    مؤكد من الرابط
+                  </span>
+                  <span className="text-[10px] bg-violet-950 text-violet-300 border border-violet-800/60 px-2 py-0.5 rounded font-mono flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-violet-400" />
+                    اقتراح ذكي قابل للتعديل
+                  </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
                 {/* Visual Ad Card Preview (5 cols) */}
                 <div className="md:col-span-5 space-y-3">
                   <span className="text-xs font-bold text-zinc-300 block">معاينة بطاقة الإعلان المسحوب:</span>
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden relative shadow-xl">
+                  <div className="bg-[#080C16] border border-[#1E2B4A] rounded-2xl overflow-hidden relative shadow-xl">
                     <div className="relative aspect-[4/5] max-h-72 w-full overflow-hidden bg-black flex items-center justify-center">
                       <img
                         src={imageUrl}
@@ -369,10 +381,10 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
 
                       {/* Top Badges */}
                       <div className="absolute top-2.5 right-2.5 left-2.5 flex items-center justify-between text-[10px]">
-                        <span className="bg-amber-500 text-zinc-950 font-bold px-2 py-0.5 rounded">
+                        <span className="bg-amber-500 text-zinc-950 font-bold px-2 py-0.5 rounded shadow">
                           {badgeText || 'الأكثر طلباً'}
                         </span>
-                        <span className="bg-black/60 backdrop-blur border border-zinc-700 text-zinc-200 px-2 py-0.5 rounded font-mono">
+                        <span className="bg-black/70 backdrop-blur border border-zinc-700 text-zinc-200 px-2 py-0.5 rounded font-mono">
                           {platform}
                         </span>
                       </div>
@@ -383,10 +395,10 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                         <div className="text-[11px] text-zinc-300 line-clamp-1">{subtext}</div>
                         <div className="flex items-center justify-between pt-1">
                           <div className="flex items-baseline gap-1">
-                            <span className="text-sm font-black text-amber-400 font-mono">{priceKWD}</span>
+                            <span className="text-sm font-black text-amber-400 font-mono tabular-nums">{priceKWD}</span>
                             <span className="text-[10px] text-zinc-400">د.ك</span>
                             {originalPriceKWD > 0 && (
-                              <span className="text-[9px] text-zinc-500 line-through mr-1 font-mono">{originalPriceKWD} د.ك</span>
+                              <span className="text-[9px] text-zinc-500 line-through mr-1 font-mono tabular-nums">{originalPriceKWD} د.ك</span>
                             )}
                           </div>
                           <span className="bg-amber-500 text-zinc-950 text-[10px] font-bold px-2 py-0.5 rounded">
@@ -396,10 +408,10 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="p-3 bg-zinc-900 border-t border-zinc-800 text-[11px] text-zinc-400 space-y-1">
+                    <div className="p-3 bg-[#0D1424] border-t border-[#1E2B4A] text-[11px] text-zinc-400 space-y-1">
                       <div className="flex justify-between">
                         <span>نوع المحتوى:</span>
-                        <span className="font-bold text-amber-400">
+                        <span className="font-bold text-violet-400">
                           {AD_CONTENT_TYPES.find((t) => t.id === contentType)?.name}
                         </span>
                       </div>
@@ -412,12 +424,12 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
 
                   {/* Image URL input */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-medium text-zinc-400 block">رابط صورة الإعلان:</label>
+                    <label className="text-[11px] font-medium text-zinc-400 block">رابط صورة المنتج الحقيقي:</label>
                     <input
                       type="url"
                       value={imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white font-mono"
+                      className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-1.5 text-xs text-white font-mono"
                       dir="ltr"
                     />
                   </div>
@@ -427,38 +439,47 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                 <div className="md:col-span-7 space-y-3.5">
                   {/* Product Name */}
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-200 block">اسم المنتج والموديل:</label>
+                    <div className="flex justify-between text-xs font-bold text-zinc-200">
+                      <span>اسم المنتج والموديل:</span>
+                      <span className="text-emerald-400 text-[10px] font-mono">✓ مؤكد من الرابط</span>
+                    </div>
                     <input
                       type="text"
                       value={productName}
                       onChange={(e) => setProductName(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-[#080C16] border border-[#1E2B4A] focus:border-violet-500 rounded-xl px-3.5 py-2 text-xs font-bold text-white focus:outline-none"
                     />
                   </div>
 
                   {/* Pricing row */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-zinc-200 block">السعر الحالي (د.ك KWD):</label>
+                      <div className="flex justify-between text-xs font-bold text-zinc-200">
+                        <span>السعر الحالي (د.ك):</span>
+                        <span className="text-emerald-400 text-[10px] font-mono">✓ مؤكد</span>
+                      </div>
                       <input
                         type="number"
                         min="1"
                         step="1"
                         value={priceKWD}
                         onChange={(e) => setPriceKWD(Number(e.target.value))}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-amber-400 focus:outline-none focus:border-amber-500"
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs font-mono font-bold text-amber-400 focus:outline-none focus:border-violet-500"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-zinc-200 block">السعر قبل الخصم (د.ك):</label>
+                      <div className="flex justify-between text-xs font-bold text-zinc-200">
+                        <span>السعر قبل الخصم:</span>
+                        <span className="text-zinc-500 text-[10px]">اختياري</span>
+                      </div>
                       <input
                         type="number"
                         min="1"
                         step="1"
                         value={originalPriceKWD}
                         onChange={(e) => setOriginalPriceKWD(Number(e.target.value))}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono text-zinc-400 focus:outline-none focus:border-amber-500"
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs font-mono text-zinc-400 focus:outline-none focus:border-violet-500"
                       />
                     </div>
                   </div>
@@ -470,7 +491,7 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                       <select
                         value={contentType}
                         onChange={(e) => setContentType(e.target.value as AdContentType)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-500 cursor-pointer"
                       >
                         {AD_CONTENT_TYPES.map((t) => (
                           <option key={t.id} value={t.id}>
@@ -485,120 +506,87 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
                       <select
                         value={platform}
                         onChange={(e) => setPlatform(e.target.value as any)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-500 cursor-pointer"
                       >
-                        <option value="Instagram">📸 إنستغرام (Instagram)</option>
-                        <option value="TikTok">🎵 تيك توك (TikTok)</option>
-                        <option value="Snapchat">👻 سناب شات (Snapchat)</option>
-                        <option value="Meta">🌐 فيسبوك وميتا (Meta)</option>
-                        <option value="WhatsApp">💬 واتساب مباشر (WhatsApp)</option>
+                        <option value="Instagram">إنستغرام (Instagram)</option>
+                        <option value="TikTok">تيك توك (TikTok)</option>
+                        <option value="Snapchat">سناب شات (Snapchat)</option>
+                        <option value="WhatsApp">واتساب (WhatsApp)</option>
+                        <option value="Meta">ميتا / فيسبوك (Meta)</option>
                       </select>
                     </div>
                   </div>
 
-                  {/* Specs & Warranty */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-zinc-300 block">كفالة الوكيل المعتمد:</label>
-                      <input
-                        type="text"
-                        value={warranty}
-                        onChange={(e) => setWarranty(e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-zinc-300 block">السعة أو القدرة:</label>
-                      <input
-                        type="text"
-                        value={capacity}
-                        onChange={(e) => setCapacity(e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Ad Copy fields */}
+                  {/* Ad Copy (Headline & Subtext) */}
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-200 block">العنوان الإعلاني الكويتي (Headline):</label>
+                    <div className="flex justify-between text-xs font-bold text-zinc-200">
+                      <span>العنوان الرئيسي (Headline):</span>
+                      <span className="text-violet-400 text-[10px] font-mono">⚡ اقتراح كويتي</span>
+                    </div>
                     <input
                       type="text"
                       value={headline}
                       onChange={(e) => setHeadline(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-[#080C16] border border-[#1E2B4A] focus:border-violet-500 rounded-xl px-3.5 py-2 text-xs text-white"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-zinc-300 block">النص التوضيحي (Subtext):</label>
-                    <textarea
-                      rows={2}
+                    <div className="flex justify-between text-xs font-bold text-zinc-200">
+                      <span>النص الترويجي وميزات المنتج:</span>
+                      <span className="text-violet-400 text-[10px] font-mono">⚡ اقتراح كويتي</span>
+                    </div>
+                    <input
+                      type="text"
                       value={subtext}
                       onChange={(e) => setSubtext(e.target.value)}
-                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-[#080C16] border border-[#1E2B4A] focus:border-violet-500 rounded-xl px-3.5 py-2 text-xs text-white"
                     />
                   </div>
 
+                  {/* CTA & Badge */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-zinc-300 block">زر اتخاذ الإجراء (CTA):</label>
+                      <label className="text-xs font-bold text-zinc-200 block">زر الدعوة للشراء (CTA):</label>
                       <input
                         type="text"
                         value={ctaText}
                         onChange={(e) => setCtaText(e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs text-amber-400 font-bold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-zinc-300 block">شارة العرض (Badge):</label>
+                      <label className="text-xs font-bold text-zinc-200 block">شارة التميز (Badge):</label>
                       <input
                         type="text"
                         value={badgeText}
                         onChange={(e) => setBadgeText(e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs text-white"
                       />
                     </div>
                   </div>
 
-                  {/* Key Features Tags */}
-                  <div className="space-y-1.5 pt-1">
-                    <label className="text-xs font-medium text-zinc-300 block">المزايا التسويقية الرئيسية:</label>
-                    <div className="flex flex-wrap gap-1.5 mb-1.5">
-                      {keyFeatures.map((feat, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-zinc-950 border border-zinc-800 text-zinc-300 px-2 py-0.5 rounded-lg text-xs flex items-center gap-1.5"
-                        >
-                          <span>• {feat}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveFeature(idx)}
-                            className="text-zinc-500 hover:text-rose-400"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex gap-2">
+                  {/* Specifications & Warranty */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-zinc-200 block">كفالة الوكيل المعتمد:</label>
                       <input
                         type="text"
-                        placeholder="أضف ميزة جديدة..."
-                        value={newFeatureInput}
-                        onChange={(e) => setNewFeatureInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
-                        className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                        value={warranty}
+                        onChange={(e) => setWarranty(e.target.value)}
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs text-zinc-200"
                       />
-                      <button
-                        type="button"
-                        onClick={handleAddFeature}
-                        className="bg-zinc-800 hover:bg-zinc-750 text-white px-3 py-1.5 rounded-xl text-xs font-bold"
-                      >
-                        إضافة
-                      </button>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-zinc-200 block">الرمز التخزيني (SKU):</label>
+                      <input
+                        type="text"
+                        value={sku}
+                        onChange={(e) => setSku(e.target.value)}
+                        className="w-full bg-[#080C16] border border-[#1E2B4A] rounded-xl px-3 py-2 text-xs text-zinc-300 font-mono"
+                      />
                     </div>
                   </div>
                 </div>
@@ -607,18 +595,18 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
           )}
         </div>
 
-        {/* Modal Footer with Action Buttons */}
-        <div className="pt-4 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-          <div className="text-xs text-zinc-400 flex items-center gap-2">
+        {/* Modal Footer Actions */}
+        <div className="pt-4 border-t border-[#1E2B4A] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+          <div className="text-xs text-zinc-400 flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>سيتم تفعيل قاعدة قفل المنتج (Product Lock 🔒) تلقائياً وحفظ الحملة في الإحصائيات.</span>
+            <span>يتم ربط الإعلان تلقائياً بلوحة الإحصائيات مع تفعيل Product Lock 🔒</span>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2.5 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium rounded-xl transition-colors cursor-pointer"
+              className="flex-1 sm:flex-none py-2.5 px-4 rounded-xl text-xs font-medium text-zinc-400 hover:text-white bg-[#131C31] hover:bg-[#1A2642] border border-[#1E2B4A] transition-colors"
             >
               إلغاء
             </button>
@@ -627,10 +615,10 @@ export const ImportAdByUrlModal: React.FC<ImportAdByUrlModalProps> = ({
               <button
                 type="button"
                 onClick={handleSave}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-zinc-950 font-bold px-5 py-2 rounded-xl text-xs sm:text-sm transition-all shadow-lg shadow-emerald-950/40 cursor-pointer"
+                className="flex-1 sm:flex-none py-2.5 px-6 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-950/40 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>حفظ وإدراج الإعلان في الحملات والإحصائيات 📊</span>
+                <Check className="w-4 h-4" />
+                <span>حفظ وتوليد الإعلان بالمتجر 🚀</span>
               </button>
             )}
           </div>
