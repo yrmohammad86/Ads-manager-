@@ -46,10 +46,12 @@ import {
   FileDown,
   Link2,
   CheckSquare,
-  Square
+  Square,
+  Smartphone
 } from 'lucide-react';
 import { AIProductAdGeneratorModal } from './AIProductAdGeneratorModal';
 import { CampaignPdfModal } from './CampaignPdfModal';
+import { AdPreviewOverlay } from './AdPreviewOverlay';
 
 interface CampaignStudioProps {
   products: ProductItem[];
@@ -101,6 +103,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   const [isQCModalOpen, setIsQCModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+  const [isAdPreviewOverlayOpen, setIsAdPreviewOverlayOpen] = useState(false);
   const [pdfInitialMode, setPdfInitialMode] = useState<'single' | 'multi'>('single');
   const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
   const [isCampaignApproved, setIsCampaignApproved] = useState(false);
@@ -361,6 +364,20 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               </span>
             </button>
           )}
+
+          {/* Ad Preview Overlay Button (Social Media Aspect Ratios) */}
+          <button
+            type="button"
+            onClick={() => setIsAdPreviewOverlayOpen(true)}
+            className="flex items-center gap-1.5 bg-[#131E35] hover:bg-[#1E2B4A] border border-violet-500/60 text-violet-300 hover:text-white font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-sm hover:bg-violet-500/15 cursor-pointer"
+            title="معاينة الإعلان عبر مقاسات منصات التواصل الاجتماعي (9:16 ريلز، 1:1 مربع، 4:5 فيد)"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-violet-400" />
+            <span>معاينة المقاسات (Ad Preview) 📱</span>
+            <span className="text-[10px] font-mono bg-violet-950 text-violet-300 border border-violet-700/60 px-1.5 py-0.2 rounded font-bold">
+              {selectedPlacement.aspectRatio}
+            </span>
+          </button>
 
           {/* Import Ad from URL Button */}
           {onOpenImportModal && (
@@ -1015,6 +1032,15 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  onClick={() => setIsAdPreviewOverlayOpen(true)}
+                  className="flex items-center gap-1 text-[11px] font-bold text-violet-300 bg-violet-950/70 hover:bg-violet-900/70 border border-violet-500/50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                  title="معاينة الإعلان عبر مقاسات المنصات (9:16 ريلز، 1:1 فيد)"
+                >
+                  <Smartphone className="w-3 h-3 text-violet-400" />
+                  <span>معاينة المقاسات (9:16 / 1:1)</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => setStudioViewMode('live_preview')}
                   className="flex items-center gap-1 text-[11px] font-bold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg transition-colors"
                 >
@@ -1097,6 +1123,25 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         selectedCampaigns={selectedCampaigns}
         allProducts={products}
         initialMode={pdfInitialMode}
+      />
+
+      {/* Ad Preview Overlay Modal for Social Media Aspect Ratios */}
+      <AdPreviewOverlay
+        isOpen={isAdPreviewOverlayOpen}
+        onClose={() => setIsAdPreviewOverlayOpen(false)}
+        product={activeProduct}
+        brand={brand}
+        initialPlacement={selectedPlacement}
+        onApplyPlacementToStudio={(newPlacement) => {
+          setSelectedPlacement(newPlacement);
+        }}
+        onOpenPdfModal={() => setIsPdfModalOpen(true)}
+        headline={headline}
+        subtext={subtext}
+        badge={badge}
+        ctaText={ctaText}
+        backgroundScene={selectedScene}
+        layoutPreset={selectedLayoutPreset}
       />
 
       {/* AI Product & Ad Generator Modal */}

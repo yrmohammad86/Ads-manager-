@@ -59,6 +59,7 @@ export const AdCanvasPreview = forwardRef<HTMLDivElement, AdCanvasPreviewProps>(
     const getRatioAspect = () => {
       if (placement.id === 'story_9_16') return 'aspect-[9/16] max-h-[640px]';
       if (placement.id === 'feed_4_5') return 'aspect-[4/5] max-h-[600px]';
+      if (placement.id === 'landscape_16_9') return 'aspect-[16/9] max-h-[460px] w-full max-w-[720px]';
       return 'aspect-square max-h-[560px]';
     };
 

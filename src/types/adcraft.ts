@@ -61,8 +61,10 @@ export interface CreativeConcept {
   defaultSceneId: string;
 }
 
+export type AdPlacementId = 'feed_4_5' | 'square_1_1' | 'story_9_16' | 'landscape_16_9';
+
 export interface AdPlacement {
-  id: 'feed_4_5' | 'square_1_1' | 'story_9_16';
+  id: AdPlacementId;
   name: string;
   aspectRatio: string;
   platform: string;

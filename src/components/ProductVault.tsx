@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ProductItem } from '../types/adcraft';
+import { ProductItem, BrandDNA } from '../types/adcraft';
 import { 
   Lock, 
   ShieldCheck, 
@@ -12,24 +12,30 @@ import {
   Info,
   Tag,
   Cpu,
-  Wand2
+  Wand2,
+  Smartphone
 } from 'lucide-react';
 import { AIProductAdGeneratorModal } from './AIProductAdGeneratorModal';
+import { AdPreviewOverlay } from './AdPreviewOverlay';
+import { INITIAL_BRAND_DNA } from '../data/mockData';
 
 interface ProductVaultProps {
   products: ProductItem[];
   onSelectProductForCampaign: (product: ProductItem) => void;
   onAddNewProduct: (newProduct: ProductItem) => void;
+  brand?: BrandDNA;
 }
 
 export const ProductVault: React.FC<ProductVaultProps> = ({
   products,
   onSelectProductForCampaign,
   onAddNewProduct,
+  brand,
 }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
   const [selectedProductDetails, setSelectedProductDetails] = useState<ProductItem | null>(products[0] || null);
+  const [previewOverlayProduct, setPreviewOverlayProduct] = useState<ProductItem | null>(null);
 
   // New product form state
   const [newTitle, setNewTitle] = useState('');
@@ -176,16 +182,31 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
                           )}
                         </div>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectProductForCampaign(product);
-                          }}
-                          className="flex items-center gap-1.5 text-xs font-bold text-zinc-950 bg-amber-500 hover:bg-amber-400 px-3 py-1.5 rounded-lg transition-colors"
-                        >
-                          بدء حملة الآن
-                          <ArrowRight className="w-3.5 h-3.5 rotate-180" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPreviewOverlayProduct(product);
+                            }}
+                            className="flex items-center gap-1 text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800/80 hover:bg-zinc-700/80 px-2.5 py-1.5 rounded-lg transition-colors border border-zinc-700/50"
+                            title="معاينة الإعلان بمقاسات السوشيال (9:16 / 1:1)"
+                          >
+                            <Smartphone className="w-3.5 h-3.5 text-violet-400" />
+                            <span className="hidden sm:inline">معاينة</span>
+                          </button>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectProductForCampaign(product);
+                            }}
+                            className="flex items-center gap-1.5 text-xs font-bold text-zinc-950 bg-amber-500 hover:bg-amber-400 px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            بدء حملة الآن
+                            <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -270,14 +291,26 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
                 </div>
               </div>
 
-              {/* Start Campaign Button */}
-              <button
-                onClick={() => onSelectProductForCampaign(selectedProductDetails)}
-                className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-950/20"
-              >
-                توليد حملة لهذا المنتج الآن
-                <ArrowRight className="w-4 h-4 rotate-180" />
-              </button>
+              {/* Action Buttons: Social Ad Preview & Start Campaign */}
+              <div className="space-y-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setPreviewOverlayProduct(selectedProductDetails)}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600/30 via-indigo-600/25 to-violet-600/30 hover:from-violet-600/40 hover:to-indigo-600/35 border border-violet-500/40 hover:border-violet-400/60 text-violet-200 font-medium py-2.5 rounded-xl transition-all shadow-sm group"
+                >
+                  <Smartphone className="w-4 h-4 text-violet-400 group-hover:scale-110 transition-transform" />
+                  معاينة الإعلان بمقاسات السوشيال (Ad Preview) 📱
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onSelectProductForCampaign(selectedProductDetails)}
+                  className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-950/20"
+                >
+                  توليد حملة لهذا المنتج الآن
+                  <ArrowRight className="w-4 h-4 rotate-180" />
+                </button>
+              </div>
             </div>
           ) : (
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center text-zinc-500">
@@ -394,6 +427,20 @@ export const ProductVault: React.FC<ProductVaultProps> = ({
           setSelectedProductDetails(newProduct);
         }}
       />
+
+      {/* Social Media Ad Preview Overlay (9:16, 4:5, 1:1, 16:9) */}
+      {previewOverlayProduct && (
+        <AdPreviewOverlay
+          isOpen={!!previewOverlayProduct}
+          onClose={() => setPreviewOverlayProduct(null)}
+          product={previewOverlayProduct}
+          brand={brand || INITIAL_BRAND_DNA}
+          onApplyPlacementToStudio={() => {
+            onSelectProductForCampaign(previewOverlayProduct);
+            setPreviewOverlayProduct(null);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -186,6 +186,13 @@ export const AD_PLACEMENTS: AdPlacement[] = [
     platform: 'Instagram Stories, Reels & TikTok Ads',
     dimensions: { width: 1080, height: 1920 },
   },
+  {
+    id: 'landscape_16_9',
+    name: 'شاشة عريضة أفقية (Landscape 16:9)',
+    aspectRatio: '16:9',
+    platform: 'YouTube Ads & Web Display Banners',
+    dimensions: { width: 1920, height: 1080 },
+  },
 ];
 
 export const CURATED_SCENES: BackgroundScene[] = [

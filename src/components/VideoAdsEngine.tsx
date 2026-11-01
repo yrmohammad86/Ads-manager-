@@ -67,8 +67,10 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
   const userAudioInstanceRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Web Audio Context for realistic Commercial Music Beat & SFX
+  // Web Audio Context for realistic Commercial Music Beat & SFX & Video Export Multiplexing
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const recordingAudioDestRef = useRef<MediaStreamAudioDestinationNode | null>(null);
+  const activeVoiceBufferSourceRef = useRef<AudioBufferSourceNode | null>(null);
 
   const totalDuration = 15; // 15 seconds Reel/Story format
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -187,7 +189,11 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
 
   // Sound generator using Web Audio API for crisp rhythmic commercial ad beat & transitions
   const playSoundEffect = (type: 'whoosh' | 'power_up' | 'beat_kick' | 'cash_chime') => {
-    if (audioMode !== 'music_sfx') return;
+    // Play when in music_sfx mode, or when recording video without voiceover so export is audible
+    const isVoiceAvailable = Boolean(recordedAudioBlob || recordedAudioUrl);
+    const shouldPlay = audioMode === 'music_sfx' || (isRecordingVideo && !isVoiceAvailable && audioMode !== 'muted');
+    if (!shouldPlay) return;
+
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -198,6 +204,16 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
       }
 
       const now = ctx.currentTime;
+
+      // Helper to route sound effect to both physical speakers and the MediaRecorder stream destination
+      const connectGainOutputs = (gain: GainNode) => {
+        gain.connect(ctx.destination);
+        if (recordingAudioDestRef.current) {
+          try {
+            gain.connect(recordingAudioDestRef.current);
+          } catch {}
+        }
+      };
 
       if (type === 'whoosh') {
         const bufferSize = ctx.sampleRate * 0.25;
@@ -218,7 +234,7 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
 
         noise.connect(filter);
         filter.connect(gain);
-        gain.connect(ctx.destination);
+        connectGainOutputs(gain);
         noise.start(now);
       } else if (type === 'power_up') {
         const osc = ctx.createOscillator();
@@ -229,7 +245,7 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
         gain.gain.setValueAtTime(0.25, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
         osc.connect(gain);
-        gain.connect(ctx.destination);
+        connectGainOutputs(gain);
         osc.start(now);
         osc.stop(now + 0.3);
       } else if (type === 'beat_kick') {
@@ -240,7 +256,7 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
         gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
         osc.connect(gain);
-        gain.connect(ctx.destination);
+        connectGainOutputs(gain);
         osc.start(now);
         osc.stop(now + 0.12);
       } else if (type === 'cash_chime') {
@@ -252,7 +268,7 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
           gain.gain.setValueAtTime(0.18, now + idx * 0.08);
           gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.3);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          connectGainOutputs(gain);
           osc.start(now + idx * 0.08);
           osc.stop(now + idx * 0.08 + 0.3);
         });
@@ -317,6 +333,10 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
       }
     } else {
       setIsPlaying(false);
+      if (activeVoiceBufferSourceRef.current) {
+        try { activeVoiceBufferSourceRef.current.stop(); } catch {}
+        activeVoiceBufferSourceRef.current = null;
+      }
       if (userAudioInstanceRef.current) {
         userAudioInstanceRef.current.pause();
       }
@@ -326,6 +346,11 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
   const handleReset = () => {
     setIsPlaying(false);
     setCurrentTime(0);
+    if (activeVoiceBufferSourceRef.current) {
+      try { activeVoiceBufferSourceRef.current.stop(); } catch {}
+      activeVoiceBufferSourceRef.current = null;
+    }
+    recordingAudioDestRef.current = null;
     if (userAudioInstanceRef.current) {
       userAudioInstanceRef.current.pause();
       userAudioInstanceRef.current.currentTime = 0;
@@ -693,8 +718,8 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
     }
   }, [currentTime, activeSceneIndex, scenes, product, brand, loadedImages]);
 
-  // Video Export Recorder with Audio Track Embedding!
-  const handleRecordVideo = () => {
+  // Video Export Recorder with Web Audio Track Multiplexing (Embedded Audio Track in WebM)
+  const handleRecordVideo = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -703,18 +728,87 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
     setCurrentTime(0);
     setIsPlaying(false);
 
-    try {
-      const canvasStream = canvas.captureStream(30); // 30 fps
-      let combinedStream = canvasStream;
+    // Stop existing audio element playback before starting master recording
+    if (userAudioInstanceRef.current) {
+      userAudioInstanceRef.current.pause();
+      userAudioInstanceRef.current.currentTime = 0;
+    }
 
-      // If user uploaded or recorded audio, play it in sync during recording
-      if (audioMode === 'merchant_voice' && userAudioInstanceRef.current) {
-        userAudioInstanceRef.current.currentTime = 0;
-        userAudioInstanceRef.current.play().catch(() => {});
+    try {
+      // 1. Initialize Web Audio Context for master recording graph
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+
+      // 2. Create MediaStreamAudioDestinationNode for routing audio tracks directly to MediaRecorder
+      const audioDest = ctx.createMediaStreamDestination();
+      recordingAudioDestRef.current = audioDest;
+
+      // 3. Decode & route merchant voice or synthesized audio if active
+      let isVoiceRoutedViaWebAudio = false;
+      if (audioMode === 'merchant_voice' && (recordedAudioBlob || recordedAudioUrl)) {
+        try {
+          let arrayBuffer: ArrayBuffer;
+          if (recordedAudioBlob) {
+            arrayBuffer = await recordedAudioBlob.arrayBuffer();
+          } else {
+            const resp = await fetch(recordedAudioUrl!);
+            arrayBuffer = await resp.arrayBuffer();
+          }
+
+          // Decode audio binary data into Web Audio buffer
+          const decodedBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
+          const voiceSource = ctx.createBufferSource();
+          voiceSource.buffer = decodedBuffer;
+
+          const voiceGain = ctx.createGain();
+          voiceGain.gain.setValueAtTime(audioVolume, ctx.currentTime);
+
+          voiceSource.connect(voiceGain);
+          voiceGain.connect(ctx.destination); // Play to local speakers for user feedback
+          voiceGain.connect(audioDest);       // Feed directly into MediaRecorder audio stream
+
+          voiceSource.start(0);
+          activeVoiceBufferSourceRef.current = voiceSource;
+          isVoiceRoutedViaWebAudio = true;
+        } catch (voiceDecodeErr) {
+          console.warn('Direct voice buffer decode failed, fallback to element playback:', voiceDecodeErr);
+        }
+      }
+
+      // 4. Capture Canvas stream (30 fps)
+      const canvasStream = canvas.captureStream(30);
+
+      // 5. Multiplex Canvas Video Tracks and Web Audio Destination Tracks into Combined MediaStream
+      const audioTracks = audioDest.stream.getAudioTracks();
+      let combinedStream: MediaStream;
+
+      if (audioTracks.length > 0 && audioMode !== 'muted') {
+        combinedStream = new MediaStream([
+          ...canvasStream.getVideoTracks(),
+          ...audioTracks,
+        ]);
+      } else {
+        combinedStream = canvasStream;
+      }
+
+      // 6. Select optimal container and codecs (VP9/VP8 with Opus audio codec)
+      let mimeType = 'video/webm;codecs=vp9,opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/webm;codecs=vp8,opus';
+      }
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/webm';
       }
 
       const mediaRecorder = new MediaRecorder(combinedStream, {
-        mimeType: 'video/webm;codecs=vp9',
+        mimeType,
+        audioBitsPerSecond: 128000,
+        videoBitsPerSecond: 2500000,
       });
 
       const chunks: BlobPart[] = [];
@@ -723,7 +817,16 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
+        // Clean up active voice buffer source and recording destination
+        if (activeVoiceBufferSourceRef.current) {
+          try {
+            activeVoiceBufferSourceRef.current.stop();
+          } catch {}
+          activeVoiceBufferSourceRef.current = null;
+        }
+        recordingAudioDestRef.current = null;
+
+        const blob = new Blob(chunks, { type: mimeType });
         const url = URL.createObjectURL(blob);
         setIsRecordingVideo(false);
 
@@ -742,11 +845,19 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
       mediaRecorder.start();
       setIsPlaying(true);
 
+      // Fallback: if voice wasn't routed via Web Audio node, play element
+      if (!isVoiceRoutedViaWebAudio && audioMode === 'merchant_voice' && userAudioInstanceRef.current) {
+        userAudioInstanceRef.current.currentTime = 0;
+        userAudioInstanceRef.current.play().catch(() => {});
+      }
+
       const timer = setInterval(() => {
         setRecordProgress((p) => {
           if (p >= 100) {
             clearInterval(timer);
-            mediaRecorder.stop();
+            if (mediaRecorder.state !== 'inactive') {
+              mediaRecorder.stop();
+            }
             setIsPlaying(false);
             if (userAudioInstanceRef.current) {
               userAudioInstanceRef.current.pause();
@@ -758,6 +869,11 @@ export const VideoAdsEngine: React.FC<VideoAdsEngineProps> = ({ product, brand }
       }, 100);
     } catch (err) {
       console.error('Recording error:', err);
+      if (activeVoiceBufferSourceRef.current) {
+        try { activeVoiceBufferSourceRef.current.stop(); } catch {}
+        activeVoiceBufferSourceRef.current = null;
+      }
+      recordingAudioDestRef.current = null;
       setIsRecordingVideo(false);
     }
   };

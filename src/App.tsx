@@ -19,8 +19,10 @@ import {
   CURATED_SCENES
 } from './data/mockData';
 import { BrandDNA, ProductItem, CampaignRecord } from './types/adcraft';
+import { ChatApp } from './components/ChatApp';
 
 export default function App() {
+  const [appMode, setAppMode] = useState<'chat' | 'adcraft'>('chat');
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [brand, setBrand] = useState<BrandDNA>(INITIAL_BRAND_DNA);
   const [products, setProducts] = useState<ProductItem[]>(INITIAL_PRODUCTS);
@@ -84,8 +86,26 @@ export default function App() {
     setAppliedCopy(null);
   };
 
+  if (appMode === 'chat') {
+    return <ChatApp onSwitchToAdCraft={() => setAppMode('adcraft')} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#080C16] text-zinc-100 flex flex-col selection:bg-violet-500/20 selection:text-violet-200">
+      {/* Top Banner to switch back to Chat App */}
+      <div className="bg-gradient-to-r from-violet-950/80 via-[#0D1424] to-violet-950/80 border-b border-violet-800/40 px-4 py-2 text-xs flex items-center justify-between">
+        <span className="text-violet-300 font-medium flex items-center gap-2">
+          <span>💬</span>
+          <span>يمكنك التبديل إلى تطبيق الدردشة في أي وقت</span>
+        </span>
+        <button
+          onClick={() => setAppMode('chat')}
+          className="bg-violet-600 hover:bg-violet-500 text-white font-bold px-3 py-1 rounded-lg transition-colors shadow-sm"
+        >
+          الانتقال إلى تطبيق الدردشة 💬
+        </button>
+      </div>
+
       <Header
         currentTab={currentTab}
         onTabChange={setCurrentTab}
@@ -141,6 +161,7 @@ export default function App() {
         {currentTab === 'products' && (
           <ProductVault
             products={products}
+            brand={brand}
             onSelectProductForCampaign={handleSelectProductForCampaign}
             onAddNewProduct={handleAddNewProduct}
           />
